@@ -70,6 +70,8 @@ services:
       - namenode
       - datanode1
       - datanode2
+    env_file:
+      - ./hadoop.env
   jupyterlab:
     image: andreper/jupyterlab:2.1.4-spark-2.4.4
     container_name: jupyterlab
@@ -77,6 +79,9 @@ services:
       - 8888:8888
     env_file:
       - ./hadoop.env
+    volumes:
+      - /data/Datasets:/data/Datasets
+      - /home/gideon/Documents/Spark/workspace:/opt/workspace
   spark-master:
     image: andreper/spark-master:2.4.4-hadoop-2.7
     container_name: spark-master
@@ -112,4 +117,4 @@ volumes:
   hadoop_datanode1:
   hadoop_datanode2:
   hadoop_historyserver:
-
+  jupyterlab:
