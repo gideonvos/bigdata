@@ -60,18 +60,25 @@ services:
       - ./data/datanode2:/hadoop/dfs/data
     env_file:
       - ./hadoop.env
-  hue:
-    image: bde2020/hdfs-filebrowser:3.11
-    environment:
-      - NAMENODE_HOST=namenode
-    ports:
-      - 8088:8088
-    depends_on:
+  datanode3:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.8-java8
+    container_name: datanode3
+    depends_on: 
       - namenode
-      - datanode1
-      - datanode2
+    volumes:
+      - ./data/datanode3:/hadoop/dfs/data
     env_file:
       - ./hadoop.env
+  datanode4:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.8-java8
+    container_name: datanode4
+    depends_on: 
+      - namenode
+    volumes:
+      - ./data/datanode4:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+      
   jupyterlab:
     image: andreper/jupyterlab:2.1.4-spark-2.4.4
     container_name: jupyterlab
@@ -86,7 +93,7 @@ services:
     image: andreper/spark-master:2.4.4-hadoop-2.7
     container_name: spark-master
     ports:
-      - 8080:8080
+      - 8088:8080
       - 7077:7077
     env_file:
       - ./hadoop.env
@@ -94,8 +101,8 @@ services:
     image: andreper/spark-worker:2.4.4-hadoop-2.7
     container_name: spark-worker-1
     environment:
-      - SPARK_WORKER_CORES=2
-      - SPARK_WORKER_MEMORY=12g
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=6g
     ports:
       - 8081:8081
     depends_on:
@@ -104,14 +111,28 @@ services:
     image: andreper/spark-worker:2.4.4-hadoop-2.7
     container_name: spark-worker-2
     environment:
-      - SPARK_WORKER_CORES=2
-      - SPARK_WORKER_MEMORY=12g
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=6g
     ports:
       - 8082:8081
     env_file:
       - ./hadoop.env
     depends_on:
       - spark-master
+  spark-worker-3:
+    image: andreper/spark-worker:2.4.4-hadoop-2.7
+    container_name: spark-worker-3
+    environment:
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=6g
+    ports:
+      - 8083:8081
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - spark-master      
+   
+      
 volumes:
   hadoop_namenode:
   hadoop_datanode1:
